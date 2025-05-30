@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";  
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ export default function Login() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
     if (!validateEmail(email)) {
       setError("Please enter a valid email.");
       return;
@@ -20,9 +22,21 @@ export default function Login() {
       setError("Please enter your password.");
       return;
     }
+
     setError("");
-    alert(`Logging in with\nEmail: ${email}\nPassword: ${password}`);
-    // Here you would send data to backend (not your task)
+
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+      email,
+      password,
+    })
+    .then((response) => {
+      alert("Login successful!");
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.error("Login error:", error.response || error.message);
+      alert("Login failed. Please check your credentials.");
+    });
   }
 
   return (

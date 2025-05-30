@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";  
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export default function Register() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
     if (!validateEmail(email)) {
       setError("Please enter a valid email.");
       return;
@@ -25,9 +27,22 @@ export default function Register() {
       setError("Passwords do not match.");
       return;
     }
+
     setError("");
-    alert(`Registering with\nEmail: ${email}\nPassword: ${password}`);
-    // Backend integration handled by someone else
+
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, {
+      email,
+      password,
+    })
+    .then((response) => {
+      alert("Registration successful!");
+      console.log(response.data);
+    
+    })
+    .catch((error) => {
+      console.error("Registration error:", error.response || error.message);
+      alert("Registration failed. Please try again.");
+    });
   }
 
   return (
