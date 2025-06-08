@@ -1,61 +1,44 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";  
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-export default function ForgotPassword() {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+const ForgotPassword = () => {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
 
-  function validateEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-
-  function handleSubmit(e) {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
-
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email.");
-      setMessage("");
-      return;
+    try {
+      const res = await axios.post('https://loginpro-8.onrender.com/api/forgot-password', {
+        email,
+      });
+      setMessage(res.data.message || 'Password reset link sent!');
+      console.log('Forgot password response:', res.data);
+    } catch (err) {
+      setMessage(err.response?.data?.error || 'Failed to send reset link');
+      console.error('Forgot password error:', err);
     }
-
-    setError("");
-    setMessage("");
-
-    axios.post(`${process.env.REACT_APP_BACKEND_URL}/forgot-password`, {
-      email,
-    })
-    .then((response) => {
-      setMessage("If this email exists in our system, you will receive a password reset link.");
-    })
-    .catch((error) => {
-      console.error("Forgot password error:", error.response || error.message);
-      setError("Failed to send reset link. Please try again.");
-    });
-  }
+  };
 
   return (
     <div className="auth-container">
       <h2>Forgot Password</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        {error && <p className="error-msg">{error}</p>}
-        {message && <p className="success-msg">{message}</p>}
-
-        <label>Email</label>
+      <form onSubmit={handleForgotPassword}>
         <input
           type="email"
+          placeholder="Enter your registered email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          onChange={e => setEmail(e.target.value)}
+          required
         />
-
         <button type="submit">Send Reset Link</button>
       </form>
-
-      <div className="auth-footer">
-        <Link to="/login">Back to Login</Link>
-      </div>
+      {message && <p className="info-message">{message}</p>}
+      <p>
+        Remembered? <Link to="/login">Login here</Link>
+      </p>
     </div>
   );
-}
+};
+
+export default ForgotPassword;

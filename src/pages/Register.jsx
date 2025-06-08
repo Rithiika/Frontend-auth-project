@@ -1,86 +1,60 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";  
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+const Register = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  function validateEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-
-  function handleSubmit(e) {
+  const handleRegister = async (e) => {
     e.preventDefault();
-
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email.");
-      return;
+    try {
+      const res = await axios.post('https://loginpro-8.onrender.com/api/register', {
+        username,
+        email,
+        password,
+      });
+      alert('Registration successful!');
+      console.log('Register response:', res.data);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Registration failed');
+      console.error('Registration error:', err);
     }
-    if (password.trim() === "") {
-      setError("Please enter a password.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    setError("");
-
-    axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, {
-      email,
-      password,
-    })
-    .then((response) => {
-      alert("Registration successful!");
-      console.log(response.data);
-    
-    })
-    .catch((error) => {
-      console.error("Registration error:", error.response || error.message);
-      alert("Registration failed. Please try again.");
-    });
-  }
+  };
 
   return (
     <div className="auth-container">
       <h2>Register</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        {error && <p className="error-msg">{error}</p>}
-
-        <label>Email</label>
+      <form onSubmit={handleRegister}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          required
+        />
         <input
           type="email"
+          placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          onChange={e => setEmail(e.target.value)}
+          required
         />
-
-        <label>Password</label>
         <input
           type="password"
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          onChange={e => setPassword(e.target.value)}
+          required
         />
-
-        <label>Confirm Password</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm your password"
-        />
-
         <button type="submit">Register</button>
       </form>
-
-      <div className="auth-footer">
-        <Link to="/login">Already have an account? Login</Link>
-      </div>
+      <p>
+        Already have an account? <Link to="/login">Login here</Link>
+      </p>
     </div>
   );
-}
+};
+
+export default Register;

@@ -1,73 +1,60 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";  
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  function validateEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-
-  function handleSubmit(e) {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    try {
+      const res = await axios.post('https://loginpro-8.onrender.com/api/login', {
+        email,
+        password,
+      });
 
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email.");
-      return;
+      // Display success with user's name
+      const { token, user } = res.data;
+      alert(`Welcome ${user.username || 'User'}! Login successful.`);
+      console.log('Login response:', res.data);
+
+    
+
+    } catch (err) {
+      console.error('Login error:', err);
+      alert(err.response?.data?.error || 'Login failed. Please check your credentials.');
     }
-    if (password.trim() === "") {
-      setError("Please enter your password.");
-      return;
-    }
-
-    setError("");
-
-    axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
-      email,
-      password,
-    })
-    .then((response) => {
-      alert("Login successful!");
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.error("Login error:", error.response || error.message);
-      alert("Login failed. Please check your credentials.");
-    });
-  }
+  };
 
   return (
     <div className="auth-container">
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        {error && <p className="error-msg">{error}</p>}
-        <label>Email</label>
+      <form onSubmit={handleLogin}>
         <input
           type="email"
+          placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          onChange={e => setEmail(e.target.value)}
+          required
         />
-
-        <label>Password</label>
         <input
           type="password"
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          onChange={e => setPassword(e.target.value)}
+          required
         />
-
         <button type="submit">Login</button>
       </form>
-
-      <div className="auth-footer">
-        <Link to="/forgot-password">Forgot Password?</Link>
-        <br />
-        <Link to="/register">Don't have an account? Register</Link>
-      </div>
+      <p>
+        New user? <Link to="/register">Register here</Link>
+      </p>
+      <p>
+        Forgot password? <Link to="/forgot-password">Reset here</Link>
+      </p>
     </div>
   );
-}
+};
+
+export default Login;
