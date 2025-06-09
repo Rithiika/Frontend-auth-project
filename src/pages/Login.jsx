@@ -9,7 +9,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://loginpro-8.onrender.com/api/login', {
+      const res = await axios.post('https://loginpro-15.onrender.com/api/login', {
         email,
         password,
       });
