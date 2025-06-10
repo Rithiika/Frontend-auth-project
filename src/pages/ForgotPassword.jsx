@@ -1,44 +1,54 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { FaEnvelope } from "react-icons/fa";
+import "../styles/Login.css";
+import { Link } from "react-router-dom";
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+function ForgotPassword() {
+  const [email, setEmail] = useState("");
 
-  const handleForgotPassword = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://loginpro-8.onrender.com/api/forgot-password', {
-        email,
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
-      setMessage(res.data.message || 'Password reset link sent!');
-      console.log('Forgot password response:', res.data);
+      const data = await res.json();
+      alert(data.message || "Reset link sent!");
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Failed to send reset link');
-      console.error('Forgot password error:', err);
+      console.error(err);
+      alert("Error sending reset link.");
     }
   };
 
   return (
-    <div className="auth-container">
-      <h2>Forgot Password</h2>
-      <form onSubmit={handleForgotPassword}>
-        <input
-          type="email"
-          placeholder="Enter your registered email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <button type="submit">Send Reset Link</button>
-      </form>
-      {message && <p className="info-message">{message}</p>}
-      <p>
-        Remembered? <Link to="/login">Login here</Link>
-      </p>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-box">
+          <h2>Forgot Password</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="input-container">
+              <FaEnvelope />
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="login-button">
+              Send Reset Link
+            </button>
+          </form>
+          <div className="links">
+            <Link to="/">Back to Login</Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default ForgotPassword;

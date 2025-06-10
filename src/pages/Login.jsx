@@ -1,60 +1,73 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { FaUser, FaLock } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import "../styles/Login.css";
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function LoginPage() {
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://loginpro-15.onrender.com/api/login', {
-        email,
-        password,
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-
-      // Display success with user's name
-      const { token, user } = res.data;
-      alert(`Welcome ${user.username || 'User'}! Login successful.`);
-      console.log('Login response:', res.data);
-
-    
-
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message || "Login successful!");
+      } else {
+        alert(data.error || "Login failed");
+      }
     } catch (err) {
-      console.error('Login error:', err);
-      alert(err.response?.data?.error || 'Login failed. Please check your credentials.');
+      console.error("Login error:", err);
+      alert("Something went wrong during login");
     }
   };
 
   return (
-    <div className="auth-container">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        New user? <Link to="/register">Register here</Link>
-      </p>
-      <p>
-        Forgot password? <Link to="/forgot-password">Reset here</Link>
-      </p>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-box">
+          <h2>Login</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="input-container">
+              <FaUser className="icon" />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="input-container">
+              <FaLock className="icon" />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" className="login-button">LOGIN</button>
+          </form>
+          <div className="links">
+            <Link to="/forgot-password">Forgot Password?</Link>
+            <Link to="/register">Register</Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
-export default Login;
+export default LoginPage;

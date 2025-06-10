@@ -1,70 +1,7 @@
-/* Basic styling for auth pages */
+
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f2f5;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #f5f7fa;
   color: #333;
-}
-
-.auth-container {
-  max-width: 400px;
-  margin: 60px auto;
-  padding: 30px;
-  background: white;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
-  border-radius: 8px;
-}
-
-.auth-container h2 {
-  margin-bottom: 20px;
-  text-align: center;
-  color: #0077ff;
-}
-
-.auth-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.auth-container input {
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s ease;
-}
-
-.auth-container input:focus {
-  border-color: #0077ff;
-  outline: none;
-}
-
-.auth-container button {
-  background-color: #0077ff;
-  color: white;
-  padding: 12px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.auth-container button:hover {
-  background-color: #005fcc;
-}
-
-.auth-container p {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.auth-container a {
-  color: #0077ff;
-  text-decoration: none;
-}
-
-.auth-container a:hover {
-  text-decoration: underline;
 }
